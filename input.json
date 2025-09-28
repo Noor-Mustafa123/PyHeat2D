@@ -1,0 +1,24 @@
+{
+    "grid": {
+        "nx": 100,
+        "ny": 100,
+        "dx": 0.1,
+        "dy": 0.1
+    },
+    "physics": {
+        "alpha": 0.1,
+        "total_time": 10.0,
+        "dt": 0.01
+    },
+    "initial_conditions": {
+        "type": "hot_spot",
+        "center": [50, 50],
+        "temperature": 100.0
+    },
+     "boundary_temperatures": {
+        "north": 0,
+        "south": 0,
+        "east": 0,
+        "west": 0
+    }
+}
