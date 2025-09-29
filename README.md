@@ -1,4 +1,4 @@
-# Heat Equation Solver
+# 2D Heat Equation Solver
 
 ## Governing PDE
 We are solving the **2D heat equation**:
