@@ -16,12 +16,13 @@ class HeatSolver2D:
     self.step_count = 0
     self.fig = None
     self.initialized_plot = False
+    self.extent = None
 
     # initalizing Phase I
     self.initialize_grid()
     self.apply_boundary_conditions()
     self.apply_initial_conditions()
-    self.initialized_plot
+    self.initialize_visualization()
 
   ###################################### Phase I ######################################
   # Creates empty "cold plate"
@@ -52,7 +53,21 @@ class HeatSolver2D:
     self.temperature_grid[:, -1] = bc["east"]
 
   def initialize_visualization(self):
-    self.fig, ax = plt.subplots(figsize=(10, 8))
+    self.fig, self.ax = plt.subplots(figsize=(10, 8))
+
+    # Get physical dimensions for proper coordinates
+    nx = self.input_data_object.grid["nx"]
+    ny = self.input_data_object.grid["ny"]
+    dx = self.input_data_object.grid["dx"]
+    dy = self.input_data_object.grid["dy"]
+
+    # Physical extent of the plate
+    x_extent = nx * dx
+    y_extent = ny * dy
+
+    # Create proper coordinate system
+    self.extent = [0, x_extent, 0, y_extent]  # [x_min, x_max, y_min, y_max]
+
     plt.ion()
     self.initialized_plot = True
 
@@ -93,18 +108,35 @@ class HeatSolver2D:
   ######################################### Phase III #########################################
 
   def visualize_current_state(self):
-    plt.clf()  # Clear current figure
+    if not self.initialized_plot:
+      self.initialize_visualization()
 
-    # Create heatmap
-    plt.imshow(self.temperature_grid, cmap='hot', interpolation='bilinear')
-    plt.colorbar(label='Temperature (°C)')
+    plt.clf()
+
+    # Create heatmap with proper physical coordinates
+    heatmap = plt.imshow(self.temperature_grid,
+                         cmap='hot',
+                         interpolation='bilinear',
+                         extent=self.extent,  # Use physical coordinates
+                         origin='lower')  # (0,0) at bottom-left
+
+    # Add colorbar
+    cbar = plt.colorbar(heatmap, label='Temperature (°C)')
+
+    # Set proper title and labels
     plt.title(
-        f'2D Heat Diffusion - Time: {self.current_time:.3f}s | Step: {self.step_count}')
-    plt.xlabel('X Position')
-    plt.ylabel('Y Position')
+      f'2D Heat Diffusion - Time: {self.current_time:.3f}s | Step: {self.step_count}')
+    plt.xlabel('X Position (meters)')  # Meaningful units
+    plt.ylabel('Y Position (meters)')  # Meaningful units
+
+    # Set equal aspect ratio (square plate)
+    plt.gca().set_aspect('equal')
+
+    # Add grid for better readability
+    plt.grid(True, alpha=0.3)
 
     plt.draw()
-    plt.pause(0.01)  # Brief pause to update
+    plt.pause(0.01)
 
     ######################################### Main #########################################
   def run_simulation(self):
