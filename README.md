@@ -1,5 +1,8 @@
 # 2D Heat Equation Solver
 
+<img width="995" height="828" alt="image" src="https://github.com/user-attachments/assets/95729972-03de-4199-b1e0-b0b1985565f2" />
+
+
 ## Governing PDE
 We are solving the **2D heat equation**:
 
